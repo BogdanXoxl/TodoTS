@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {FC, useState} from 'react';
+import * as uuid from 'uuid';
+import Header from "./components/Header";
+import ITask from "./Interfaces/ITodoList";
+import TodoList from "./components/TodoList";
+import {Container, GlobalStyles} from "./app.styled";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const App:FC = () => {
+    const [list, setList] = useState<ITask[]>([]);
+
+    const addTask = (task: string, deadline = 0):void => {
+        if(task.trim())
+            setList([ ...list, {task, deadline, id: uuid.v4()}]);
+    };
+
+    const completeTask = (task: ITask):Function => {
+        return ():void => setList(list.filter((t) => t !== task));
+    }
+
+    return (
+        <>
+            <Container>
+                <Header addTask={addTask}/>
+                <TodoList tasks={list} completeTask={completeTask}/>
+            </Container>
+            <GlobalStyles/>
+        </>
+    );
 }
 
 export default App;
